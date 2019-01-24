@@ -6,7 +6,7 @@ import { Icon } from 'react-native-elements';
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
 
-export default class MainPage extends Component {
+export default class Archived extends Component {
     constructor(props){
         super(props);
         this.state={
@@ -14,6 +14,7 @@ export default class MainPage extends Component {
         }
         this.updateIndex = this.updateIndex.bind(this)
     }
+
     updateIndex (selectedIndex) {
         this.setState({selectedIndex})
     }
@@ -21,8 +22,14 @@ export default class MainPage extends Component {
     render(){
         return(
             <View style={styles.container}>
-                <Text>Active</Text>
+                <Text>Archived</Text>
                 <View style={styles.buttonContainer}>
+                    {/* <ButtonGroup
+                        onPress={this.updateIndex}
+                        selectedIndex={this.state.selectedIndex}
+                        buttons={buttons}
+                        containerStyle={{height: 50}}
+                    /> */}
                 </View>
             </View>
         );
