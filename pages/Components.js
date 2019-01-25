@@ -3,14 +3,14 @@ import React from 'react';
 import { createBottomTabNavigator, createStackNavigator } from 'react-navigation';
 import { Icon } from 'react-native-elements';
 
-import MainPage from './MainPage'
+import Active from './Active'
 import Archived from './Archived';
 
 const Components = createBottomTabNavigator(
   {
-    MainPage: {
-      screen: MainPage,
-      path: '/main',
+    Active: {
+      screen: Active,
+      path: '/Active',
       navigationOptions: {
         tabBarLabel: 'Active',
         tabBarIcon: ({ tintColor, focused }) => (
@@ -40,13 +40,18 @@ const Components = createBottomTabNavigator(
       },
   },
   {
-    initialRouteName: 'MainPage',
+    initialRouteName: 'Active',
     animationEnabled: false,
     swipeEnabled: true,
     tabBarPosition: 'bottom',
+    
     tabBarOptions: {
       activeTintColor: '#e91e63',
       showIcon: true,
+      style:{
+        backgroundColor: '#293046',
+        borderTopColor: '#fff',
+      }
     },
   }
 );

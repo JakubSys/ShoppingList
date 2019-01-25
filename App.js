@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { createStackNavigator, createAppContainer } from 'react-navigation';
 import WelcomePage from './pages/WelcomePage';
-import MainPage from './pages/MainPage';
+import Active from './pages/Active';
 import Archived from './pages/Archived'
 import Components from './pages/Components'
 
@@ -9,12 +9,12 @@ import Components from './pages/Components'
 const RootStack = createStackNavigator(
 {
   WelcomePage,
-  MainPage,
+  Active,
   Components,
   Archived
 },
 {
-  initialRouteName: 'WelcomePage'
+  initialRouteName: 'Components'
 },
 {
   defaultNavigationOptions:{
