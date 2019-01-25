@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { StyleSheet, Text, View, SafeAreaView, Dimensions, ScrollView, AsyncStorage, TouchableOpacity } from 'react-native'
-import { List, ListItem } from 'react-native-elements'
+import { List, ListItem, Button } from 'react-native-elements'
 import Scene from '../components/Scene';
 import CreateListModal from '../components/CreateListModal';
 const SCREEN_WIDTH = Dimensions.get('window').width
@@ -25,16 +25,15 @@ export default class Active extends Component {
   componentWillMount(){
       setTimeout(()=>{
         this.getData();
-        this.setState({isLoading:false})
-      }, 1500);
-
+      }, 1000);
   }
 
   getData = async ()=>{
     const activeList = await AsyncStorage.getItem('activeList') ;
     const parsedActiveList = JSON.parse(activeList);
-    this.setState({activeList: parsedActiveList})
+    this.setState({activeList: parsedActiveList, isLoading:false})
     console.log(parsedActiveList)
+    
   }
 
   updateIndex (selectedIndex) {
@@ -83,15 +82,31 @@ export default class Active extends Component {
             <View style={styles.titleContainer}>
                 <Text style={styles.title}>Shopping Lists:</Text>
             </View>
-            <TouchableOpacity onPress={()=>(this.setState({createListModal: true}))} ><Text>XD</Text></TouchableOpacity>
-            {this.state.activeList.length != 0 &&
+            <View style={{width:"100%", alignItems: 'center', justifyContent: 'center', height:"10%"}}>
+                <Button
+                    title="ADD LIST"
+                    containerStyle={{ flex: -1 }}
+                    buttonStyle={styles.signUpButton}
+                    titleStyle={styles.signUpButtonText}
+                    onPress={()=>{this.setState({createListModal:true})}}
+                />
+            </View>
+            {this.state.isLoading ==false && this.state.activeList.length != 0 &&
             <ScrollView>
                 <List containerStyle={{ marginBottom: 20 }}>
                   {this.state.activeList.map(l => <ListItem title={l.title} key={l.key} />)}
                 </List>
             </ScrollView>}
-            {this.state.activeList.length == 0 &&
-                 <Scene id={3}  txtBig="No list available, add a new one!"  />
+
+            {this.state.isLoading ==false && this.state.activeList.length == 0 &&
+                <View style={{top:0, height:'40%'}} >
+                    <Scene id={3}  txtBig="No list available, add a new one!"  />
+                </View>   
+            }
+            {this.state.isLoading ==true &&
+                <View style={{top:0, height:'40%'}} >
+                    <Scene id={4}  txtBig="Loading..."  />
+                </View>
             }
             <CreateListModal
                 visible={this.state.createListModal}
@@ -121,6 +136,16 @@ const styles = StyleSheet.create({
       alignSelf: 'center',
       fontSize: 24,
       color: '#fff'
-  }
+  },
+  signUpButtonText: {
+    fontFamily: 'bold',
+    fontSize: 13,
+  },
+  signUpButton: {
+    width: 250,
+    borderRadius: 50,
+    height: 45,
+    backgroundColor: '#FF9800'
+  },
 
 })
