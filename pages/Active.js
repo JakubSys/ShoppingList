@@ -80,6 +80,7 @@ export default class Active extends Component {
 
     await AsyncStorage.setItem('activeList', JSON.stringify(activeList))
     await AsyncStorage.setItem('archivedList', JSON.stringify(archivedList))
+    console.log(archivedItem, activeList)
     this.setState({ activeList, archivedList })
   }
 

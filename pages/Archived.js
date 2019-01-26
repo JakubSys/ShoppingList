@@ -30,11 +30,13 @@ export default class Archived extends Component {
   }
 
   getDataHandler = async () => {
-    const archivedList = await AsyncStorage.getItem('archivedList') || []
+    const archivedList = await AsyncStorage.getItem('archivedList')
+    console.log(archivedList)
     let parsedArchivedList = []
-    if(archivedList.length != 0){
-        parsedAchivedList = JSON.parse(archivedList)
-    }
+    if(archivedList.length != 0)
+    parsedArchivedList = JSON.parse(archivedList)
+    
+    console.log(parsedArchivedList)
     this.setState({ archivedList: parsedArchivedList, isLoading: false })
   }
 
