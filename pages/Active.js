@@ -35,10 +35,17 @@ export default class Active extends Component {
   }
 
   getDataHandler = async () => {
-    const activeList = await AsyncStorage.getItem('activeList')
-    const parsedActiveList = JSON.parse(activeList)
-    const archivedList = await AsyncStorage.getItem('archivedList')
-    const parsedArchivedList = JSON.parse(archivedList)
+    const activeList = await AsyncStorage.getItem('activeList') || []
+    let parsedActiveList = [];
+    if(activeList.length != 0){
+      parsedActiveList = JSON.parse(activeList)
+    }
+    let parsedArchivedList = [];
+    const archivedList = await AsyncStorage.getItem('archivedList') || []
+    if(archivedList.length != 0){
+        parsedArchivedList = JSON.parse(archivedList)
+    }
+    
     this.setState({ activeList: parsedActiveList, archivedList: parsedArchivedList, isLoading: false })
   }
 
