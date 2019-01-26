@@ -1,121 +1,159 @@
 import React, { Component } from 'react'
-import { StyleSheet, Text, View, SafeAreaView, Dimensions, ScrollView, AsyncStorage, TouchableOpacity } from 'react-native'
+import {
+  StyleSheet,
+  Text,
+  View,
+  SafeAreaView,
+  Dimensions,
+  ScrollView,
+  AsyncStorage
+} from 'react-native'
 import { List, ListItem, Button } from 'react-native-elements'
-import Scene from '../components/Scene';
-import CreateListModal from '../components/CreateListModal';
+import Scene from '../components/Scene'
+import CreateListModal from '../components/CreateListModal'
 const SCREEN_WIDTH = Dimensions.get('window').width
 const SCREEN_HEIGHT = Dimensions.get('window').height
 
-
-
-
 export default class Active extends Component {
-  constructor (props) {
+  constructor(props) {
     super(props)
     this.state = {
-      selectedIndex: 1,
       activeList: [],
+      archivedList: [],
       createListModal: false,
-      isLoading:true
+      isLoading: true
     }
-    this.updateIndex = this.updateIndex.bind(this);
     this.setToday = this.setToday.bind(this);
     this.createHandler = this.createHandler.bind(this);
-  }
-  componentWillMount(){
-      setTimeout(()=>{
-        this.getData();
-      }, 1000);
+    this.archiveHandler = this.archiveHandler.bind(this);
   }
 
-  getData = async ()=>{
-    const activeList = await AsyncStorage.getItem('activeList') ;
-    const parsedActiveList = JSON.parse(activeList);
-    this.setState({activeList: parsedActiveList, isLoading:false})
-    console.log(parsedActiveList)
-    
+  componentWillMount() {
+    setTimeout(() => {
+      this.getDataHandler()
+    }, 1000)
   }
 
-  updateIndex (selectedIndex) {
-    this.setState({ selectedIndex })
+  getDataHandler = async () => {
+    const activeList = await AsyncStorage.getItem('activeList')
+    const parsedActiveList = JSON.parse(activeList)
+    const archivedList = await AsyncStorage.getItem('archivedList')
+    const parsedArchivedList = JSON.parse(archivedList)
+    this.setState({ activeList: parsedActiveList, archivedList: parsedArchivedList, isLoading: false })
   }
 
-  createHandler = async (newTitle) => {
-    if(!newTitle){
-          return;
+  createHandler = async newTitle => {
+    if (!newTitle) {
+      return
     }
-    const activeList =[...this.state.activeList];
-    activeList.push({
-        key: Math.random().toString(36).substring(2, 15),
-        title: newTitle,
-        date: this.setToday()
-    });
-    await AsyncStorage.setItem('activeList', JSON.stringify(activeList));
+    const activeList = [...this.state.activeList]
+    activeList.unshift({
+      key: Math.random()
+        .toString(36)
+        .substring(2, 15),
+      title: newTitle + ' ' + this.setToday(),
+      date: this.setToday(),
+      products: [],
+    })
+    await AsyncStorage.setItem('activeList', JSON.stringify(activeList))
     this.setState({
-        activeList,
-        createListModal: false,
-    });
-    this.getData();
+      activeList,
+      createListModal: false
+    })
+    this.getDataHandler()
   }
 
-  setToday (){
-    var today = new Date();
-    var dd = today.getDate();
-    var mm = today.getMonth() + 1;
-    var yyyy = today.getFullYear();
+  archiveHandler = async key => {
+    this.getDataHandler()
+    const listIndex = this.state.activeList.findIndex(l => l.key === key)
+    const activeList = [...this.state.activeList]
+    const archivedList = [...this.state.archivedList]
+    const archivedItem = activeList.splice(listIndex, 1)
+    archivedList.unshift(archivedItem[0])
+
+    await AsyncStorage.setItem('activeList', JSON.stringify(activeList))
+    await AsyncStorage.setItem('archivedList', JSON.stringify(archivedList))
+    this.setState({ activeList, archivedList })
+  }
+
+  setToday() {
+    var today = new Date()
+    var dd = today.getDate()
+    var mm = today.getMonth() + 1
 
     if (dd < 10) {
-        dd = '0' + dd;
+      dd = '0' + dd
     }
     if (mm < 10) {
-        mm = '0' + mm;
+      mm = '0' + mm
     }
-    today = mm + ' ' + dd + ' ' + yyyy;
+    today = dd + '.' + mm
 
-    return today;
-    }
+    return today
+  }
 
-
-  render () {
+  render() {
     return (
-        <SafeAreaView style = {styles.container}>
-            <View style={styles.titleContainer}>
-                <Text style={styles.title}>Shopping Lists:</Text>
-            </View>
-            <View style={{width:"100%", alignItems: 'center', justifyContent: 'center', height:"10%"}}>
-                <Button
-                    title="ADD LIST"
-                    containerStyle={{ flex: -1 }}
-                    buttonStyle={styles.signUpButton}
-                    titleStyle={styles.signUpButtonText}
-                    onPress={()=>{this.setState({createListModal:true})}}
-                />
-            </View>
-            {this.state.isLoading ==false && this.state.activeList.length != 0 &&
+      <SafeAreaView style={styles.container}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Shopping Lists:</Text>
+        </View>
+        <View
+          style={{
+            width: '100%',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '10%'
+          }}
+        >
+          <Button
+            title="ADD LIST"
+            containerStyle={{ flex: -1 }}
+            buttonStyle={styles.signUpButton}
+            titleStyle={styles.signUpButtonText}
+            onPress={() => {
+              this.setState({ createListModal: true })
+            }}
+          />
+        </View>
+        {this.state.isLoading == false &&
+          this.state.activeList.length != 0 && (
             <ScrollView>
-                <List containerStyle={{ marginBottom: 20 }}>
-                  {this.state.activeList.map(l => <ListItem title={l.title} key={l.key} />)}
-                </List>
-            </ScrollView>}
+              <List containerStyle={{ marginBottom: 20 }}>
+                {this.state.activeList.map(l => (
+                  <ListItem
+                    title={l.title}
+                    key={l.key}
+                    containerStyle={styles.listItem}
+                    titleStyle={styles.listItemTitle}
+                    onPress={() => {
+                      this.props.navigation.navigate('Details', { key: l.key, archive: this.archiveHandler  })
+                    }}
+                  />
+                ))}
+              </List>
+            </ScrollView>
+          )}
 
-            {this.state.isLoading ==false && this.state.activeList.length == 0 &&
-                <View style={{top:0, height:'40%'}} >
-                    <Scene id={3}  txtBig="No list available, add a new one!"  />
-                </View>   
-            }
-            {this.state.isLoading ==true &&
-                <View style={{top:0, height:'40%'}} >
-                    <Scene id={4}  txtBig="Loading..."  />
-                </View>
-            }
-            <CreateListModal
-                visible={this.state.createListModal}
-                onPressBack={() => {
-                    this.setState({ createListModal: false })
-                }}
-                onCreate={this.createHandler}
-            />
-        </SafeAreaView>
+        {this.state.isLoading == false &&
+          this.state.activeList.length == 0 && (
+            <View style={{ top: 0, height: '40%' }}>
+              <Scene id={3} txtBig="No list available, add a new one!" />
+            </View>
+          )}
+        {this.state.isLoading == true && (
+          <View style={{ top: 0, height: '40%' }}>
+            <Scene id={4} txtBig="Loading..." />
+          </View>
+        )}
+        <CreateListModal
+          visible={this.state.createListModal}
+          onPressBack={() => {
+            this.setState({ createListModal: false })
+          }}
+          onCreate={this.createHandler}
+        />
+      </SafeAreaView>
     )
   }
 }
@@ -124,22 +162,22 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#293046',
     width: SCREEN_WIDTH,
-    height: SCREEN_HEIGHT,
+    height: SCREEN_HEIGHT
   },
-  titleContainer:{
-      width: SCREEN_WIDTH,
-      height: '10%',
-      justifyContent: 'center',
-      marginBottom:  0 
+  titleContainer: {
+    width: SCREEN_WIDTH,
+    height: '10%',
+    justifyContent: 'center',
+    marginBottom: 0
   },
-  title:{
-      alignSelf: 'center',
-      fontSize: 24,
-      color: '#fff'
+  title: {
+    alignSelf: 'center',
+    fontSize: 24,
+    color: '#fff'
   },
   signUpButtonText: {
     fontFamily: 'bold',
-    fontSize: 13,
+    fontSize: 13
   },
   signUpButton: {
     width: 250,
@@ -147,5 +185,11 @@ const styles = StyleSheet.create({
     height: 45,
     backgroundColor: '#FF9800'
   },
-
+  //TO DO!
+  listItem: {
+    backgroundColor: '#fff',
+  },
+  listItemTitle: {
+    color: '#e91e63'
+  }
 })

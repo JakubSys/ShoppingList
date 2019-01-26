@@ -36,10 +36,6 @@ export default class WelcomePage extends Component {
                      <Scene id={1}  txtBig="Get ride of trillions of notes!" txtSmall="Keep your all shopping lists in one simple app!"/>
                      <Scene id={2}  txtBig="No more forgotten products!" txtSmall="Start using this app right now, and be sure you have all what you need!"/>
             </Swiper>
-            {this.state.pageId != 2 &&
-            <View style={{bottom:0, width:"100%", position: 'absolute', alignItems: 'center', justifyContent: 'center', height:"18%"}}>
-                <Text style={styles.swipeText}>Swipe left</Text>
-            </View>}
             {this.state.pageId == 2 &&
             <View style={{bottom:"18%", width:"100%", position: 'absolute', alignItems: 'center', justifyContent: 'center', height:"18%"}}>
                 <Button

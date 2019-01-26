@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {Text, TouchableOpacity, View, Animated, TextInput} from 'react-native';
 
-export default class CreateListModal extends Component {
+export default class AddProductModal extends Component {
 
     constructor(props) {
         super(props);
@@ -9,7 +9,7 @@ export default class CreateListModal extends Component {
             opacity: new Animated.Value(0),
             opacity2: new Animated.Value(0),
             visible: false,
-            listName: ''
+            productName: ''
         }
         this.handleCreate = this.handleCreate.bind(this);
     }
@@ -44,9 +44,10 @@ export default class CreateListModal extends Component {
     }
 
     handleCreate(){
-        this.setState({listName: ''})
-        this.props.onCreate(this.state.listName);
+        this.setState({productName: ''})
+        this.props.onCreate(this.state.productName);
     }
+
 
     render() {
         if(this.props.visible)
@@ -63,13 +64,13 @@ export default class CreateListModal extends Component {
                     >
                         <View style={styles.topContainer}>
                             <View style={styles.textContainer}>
-                                <Text style={styles.header}>Create new list</Text>
+                                <Text style={styles.header}>Add new product</Text>
                             </View>
                             <TextInput
                                 style={{height: 30,width:'80%', marginTop: 10, borderColor: 'gray', borderWidth:1}}
-                                onChangeText={(listName)=> this.setState({listName})}
-                                placeholder="Enter list name"
-                                value={this.state.listName}
+                                onChangeText={(productName)=> this.setState({productName})}
+                                placeholder="Enter product name"
+                                value={this.state.productName}
                             />
                         </View>
                         <View style={styles.bottomContainer}>
@@ -93,13 +94,13 @@ export default class CreateListModal extends Component {
 
 const styles = {
     containerStyle: {
-        height: "100%",
+        height: "120%",
         width: "100%",
         backgroundColor: 'rgba(0, 0, 0, 0.7)',
         position: "absolute",
         alignItems:'center',
         justifyContent: 'center',
-        bottom: 0
+        
     },
     messageContainer: {
         width:"80%",

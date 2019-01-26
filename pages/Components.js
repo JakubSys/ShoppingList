@@ -13,7 +13,7 @@ const Components = createBottomTabNavigator(
       path: '/Active',
       navigationOptions: {
         tabBarLabel: 'Active',
-        tabBarIcon: ({ tintColor, focused }) => (
+        tabBarIcon: ({ tintColor }) => (
           <Icon
             name='list'
             size={30}
@@ -28,7 +28,7 @@ const Components = createBottomTabNavigator(
         path: '/Archived',
         navigationOptions: {
           tabBarLabel: 'Archived',
-          tabBarIcon: ({ tintColor, focused }) => (
+          tabBarIcon: ({ tintColor }) => (
             <Icon
               name="wpforms"
               size={30}
@@ -41,10 +41,7 @@ const Components = createBottomTabNavigator(
   },
   {
     initialRouteName: 'Active',
-    animationEnabled: false,
-    swipeEnabled: true,
-    tabBarPosition: 'bottom',
-    
+    lazy:true,
     tabBarOptions: {
       activeTintColor: '#e91e63',
       showIcon: true,
